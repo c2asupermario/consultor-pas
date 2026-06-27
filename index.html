@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultor PAS Pro - Versión Y</title>
+    <style>
+        :root { 
+            --primary: #1a5276; 
+            --secondary: #3498db;
+            --success: #27ae60; 
+            --danger: #e74c3c; 
+            --bg: #f4f7f6; 
+            --white: #ffffff;
+        }
+        
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 10px; color: #333; }
+        .container { max-width: 1200px; margin: auto; background: var(--white); padding: 15px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        .top-panel { background: #f8f9fa; padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #edf2f7; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .selector-guia { display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; }
+        .btn-guia { flex: 1; padding: 10px; border: 2px solid var(--primary); border-radius: 12px; cursor: pointer; background: white; color: var(--primary); font-weight: bold; font-size: 0.85rem; }
+        .btn-guia.active { background: var(--primary); color: white; }
+
+        .search-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .input-group { display: flex; flex-direction: column; gap: 4px; }
+        .input-group label { font-size: 0.7rem; font-weight: bold; color: #64748b; text-transform: uppercase; }
+        input { padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 1rem; text-align: center; outline: none; }
+        input:focus { border-color: var(--secondary); }
+
+        .grid-view { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 12px; }
+        .card { border: 2px solid #f0f4f8; border-radius: 16px; padding: 12px; background: #fff; position: relative; transition: border-color 0.2s; }
+        .card.premium { border-color: var(--success); }
+        .card.tr { border-color: var(--secondary); }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .id-badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; min-width: 35px; text-align: center; }
+        .plan-name { font-weight: bold; color: var(--primary); font-size: 1.1rem; }
+        .max-year { font-size: 0.75rem; color: #7f8c8d; font-weight: bold; }
+        
+        .tag-cob { font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; background: #ebf2f7; color: var(--primary); border: 1px solid #d6e4ef; font-weight: bold; margin-right: 4px; margin-bottom: 4px; display: inline-block; }
+
+        .item-list { list-style: none; padding: 0; margin: 8px 0; font-size: 0.9rem; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding: 2px 0; }
+        .evento-text { font-size: 0.8rem; color: #94a3b8; font-style: italic; flex-grow: 1; margin-left: 8px; }
+        
+        .val { font-weight: bold; color: var(--danger); }
+        .sl { color: var(--success); font-weight: bold; }
+        
+        .franquicia-box { background: #fff3f3; border: 1px solid #fecaca; color: #dc2626; padding: 8px; border-radius: 10px; margin-bottom: 10px; font-weight: bold; font-size: 0.95rem; text-align: center; }
+
+        .footer-row { display: flex; gap: 8px; margin-top: 10px; }
+        .grua-tag { flex: 1; font-size: 0.85rem; color: var(--primary); font-weight: bold; display: flex; justify-content: space-between; align-items: center; background: #e1f5fe; padding: 10px; border-radius: 10px; }
+        .btn-ws { background: #25d366; color: white; border: none; border-radius: 10px; padding: 0 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+
+        .nota-box { margin-top: 10px; padding-top: 8px; font-size: 0.75rem; color: #64748b; border-top: 1px solid #f1f5f9; }
+        
+        .cat-header { grid-column: 1 / -1; color: white; padding: 10px 18px; border-radius: 12px; font-size: 0.85rem; font-weight: 900; margin-top: 25px; text-transform: uppercase; letter-spacing: 1.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .cat-header:first-child { margin-top: 0; }
+
+        .cat-tra { background: linear-gradient(90deg, #c0392b, #e74c3c); border-left: 6px solid #922b21; }
+        .cat-c   { background: linear-gradient(90deg, #138d75, #1abc9c); border-left: 6px solid #0e6655; }
+        .cat-b   { background: linear-gradient(90deg, #d68910, #f39c12); border-left: 6px solid #9c640c; }
+        .cat-a   { background: linear-gradient(90deg, #2e4053, #5d6d7e); border-left: 6px solid #1c2833; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="top-panel">
+        <div class="selector-guia">
+            <button class="btn-guia active" onclick="setGuia('59', this)">GUÍA 59 (ABRIL)</button>
+            <button class="btn-guia" onclick="setGuia('60', this)">GUÍA 60 (MAYO)</button>
+        </div>
+        <div class="search-box">
+            <div class="input-group">
+                <label>Año Modelo</label>
+                <input type="number" id="txtAnio" value="2015" oninput="procesar()">
+            </div>
+            <div class="input-group">
+                <label>Suma Asegurada ($)</label>
+                <input type="text" id="txtSuma" placeholder="Ej: 25.000.000" oninput="formatearMoneda(this); procesar()">
+            </div>
+        </div>
+    </div>
+
+    <div id="gridResultados" class="grid-view"></div>
+</div>
+
+<script>
+    let guiaActual = '59';
+    const anioHoy = 2026;
+
+    const tablaMontos = {
+        '59': { granizo: "630.000", cristales: "242.000", cerraduras: "242.000", parabrisas: "410.000" },
+        '60': { granizo: "710.000", cristales: "275.000", cerraduras: "275.000", parabrisas: "465.000" }
+    };
+
+    const limitesGrua = {
+        'D': "180.000",
+        'P': "180.000",
+        'M': "180.000",
+        'F': "250.000",
+        'C2': "180.000",
+        'C': "150.000",
+        'C1': "150.000",
+        'B4': "120.000",
+        'B': "120.000",
+        'B1': "120.000",
+        'A1': "60.000",
+        'A': "60.000"
+    };
+
+    const AUTFRA = [
+        { id: "M", desde: 0, hasta: 20434999, monto: 535000 },
+        { id: "M", desde: 20435000, hasta: 999999999, monto: 600000 },
+        { id: "P", desde: 0, hasta: 13489999, monto: 675000 },
+        { id: "P", desde: 13490000, hasta: 199999999, monto: 785000 },
+        { id: "P", desde: 20000000, hasta: 349999999, monto: 895000 }
+    ];
+
+    const coberturas = [
+        { 
+            id: "D", cat: "TODO RIESGO", nom: "Todo Riesgo Variable", max: 6, reqFra: false,
+            base: ["RC", "Robo T/P", "Inc. T/P", "Daño T/P"],
+            beneficios: [
+                { nombre: "Granizo", evento: "Sin Límite", sl: true },
+                { nombre: "Cristales", evento: "S/L - 1 Evento", sl: true },
+                { nombre: "Cerraduras", evento: "Sin Límite", sl: true }
+            ],
+            nota: "Franquicia fija según pauta comercial vigente."
+        },
+        { 
+            id: "F", cat: "TODO RIESGO", nom: "TR Sin Franquicia", max: 10, reqFra: false,
+            base: ["RC", "Robo T/P", "Inc. T/P", "Daño T/P (S/F)"],
+            beneficios: [
+                { nombre: "Granizo", evento: "Sin Límite", sl: true },
+                { nombre: "Cristales", evento: "Sin Límite", sl: true }
+            ],
+            nota: "Cobertura máxima sin deducibles."
+        },
+        { 
+            id: "P", cat: "TODO RIESGO", nom: "TR con Franquicia P", max: 13, reqFra: true,
+            base: ["RC", "Robo T/P", "Inc. T/P", "Daño T/P con Franq."],
+            beneficios: [
+                { nombre: "Granizo", evento: "Monto s/Guía", sl: false },
+                { nombre: "Cristales", evento: "1 Evento anual", sl: false }
+            ],
+            nota: "Deducible escalonado según suma asegurada."
+        },
+        { 
+            id: "M", cat: "TODO RIESGO", nom: "TR con Franquicia M", max: 12, reqFra: true,
+            base: ["RC", "Robo T/P", "Inc. T/P", "Daño T/P con Franq."],
+            beneficios: [
+                { nombre: "Granizo", evento: "Monto s/Guía", sl: false },
+                { nombre: "Cristales", evento: "1 Evento anual", sl: false }
+            ],
+            nota: "Deducible escalonado según suma asegurada."
+        },
+        { 
+            id: "C2", cat: "TERCEROS COMPLETO", nom: "C2 Premium", max: 14, reqFra: false,
+            base: ["RC", "Robo T/P", "Inc. T/P", "Daño Total"],
+            beneficios: [
+                { nombre: "Granizo", evento: "Hasta Lim. Máx", sl: false },
+                { nombre: "Cristales", evento: "1 Evento anual", sl: false },
+                { nombre: "Parabrisas", evento: "Sin Límite", sl: true }
+            ],
+            nota: "Requiere verificación técnica previa."
+        },
+        { 
+            id: "C", cat: "TERCEROS COMPLETO", nom: "C Terceros Completo", max: 16, reqFra: false,
+            base: ["RC", "Robo T/P", "Inc. T/P", "Daño Total"],
+            beneficios: [
+                { nombre: "Granizo", evento: "1 por año", sl: false },
+                { nombre: "Cristales", evento: "1 por año", sl: false }
+            ],
+            nota: "Terceros Completo con límites standard."
+        },
+        { 
+            id: "C1", cat: "TERCEROS COMPLETO", nom: "C1 Terceros", max: 18, reqFra: false,
+            base: ["RC", "Robo T/P", "Inc. T/P", "Daño Total"],
+            beneficios: [
+                { nombre: "Granizo", evento: "Hasta Lim. Máx", sl: false },
+                { nombre: "Cristales", evento: "1 por año", sl: false }
+            ],
+            nota: "Antigüedad extendida."
+        },
+        { 
+            id: "B4", cat: "SOLO TOTALES", nom: "B4 Tradicional", max: 15, reqFra: false,
+            base: ["RC", "Robo Total", "Inc. Total", "Daño Total"],
+            beneficios: [
+                { nombre: "Granizo", evento: "1 por año", sl: false },
+                { nombre: "Cristales", evento: "1 por año", sl: false }
+            ],
+            nota: "Cobertura clásica con límites fijos."
+        },
+        { 
+            id: "B", cat: "SOLO TOTALES", nom: "B Básico + DT", max: 20, reqFra: false,
+            base: ["RC", "Robo Total", "Inc. Total", "Daño Total (DT)"],
+            beneficios: [],
+            nota: "Cubre Robo/Incendio y Destrucción Total por Accidente."
+        },
+        { 
+            id: "B1", cat: "SOLO TOTALES", nom: "B1 Solo Totales", max: 20, reqFra: false,
+            base: ["RC", "Robo Total", "Inc. Total"],
+            beneficios: [],
+            nota: "EXCLUYE Destrucción Total por Accidente."
+        },
+        { 
+            id: "A1", cat: "BÁSICA", nom: "Solo RC (Incendio A1)", max: 50, reqFra: false,
+            base: ["RC (Obligatoria)", "Incendio (A1)"],
+            beneficios: [],
+            nota: "Ideal para unidades de antigüedad extendida (hasta 50 años)."
+        },
+        { 
+            id: "A", cat: "BÁSICA", nom: "A Responsabilidad Civil", max: 30, reqFra: false,
+            base: ["RC (Obligatoria)"],
+            beneficios: [],
+            nota: "Cobertura mínima obligatoria."
+        }
+    ];
+
+    function formatearMoneda(input) {
+        let value = input.value.replace(/\D/g, "");
+        if (value) {
+            input.value = parseInt(value).toLocaleString('es-AR');
+        } else {
+            input.value = "";
+        }
+    }
+
+    function setGuia(v, btn) {
+        guiaActual = v;
+        document.querySelectorAll('.btn-guia').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        procesar();
+    }
+
+    function copiarWhatsApp(planId, franquicia) {
+        const anio = document.getElementById('txtAnio').value;
+        const sumaRaw = document.getElementById('txtSuma').value.replace(/\./g, "");
+        const suma = parseInt(sumaRaw) || 0;
+        const antig = anioHoy - anio;
+        const c = coberturas.find(x => x.id === planId);
+        const montos = tablaMontos[guiaActual];
+        const montoGrua = limitesGrua[planId] || "Cons.";
+        
+        let msg = `*Cotización Cooperación Seguros*\n`;
+        msg += `🚗 Unidad: ${anio} (${antig} años)\n`;
+        if (suma > 0) msg += `💰 Suma: $${suma.toLocaleString('es-AR')}\n`;
+        msg += `📋 Plan: *${c.nom}*\n`;
+        if (franquicia) msg += `🔴 *Franquicia: ${franquicia}*\n`;
+        msg += `--------------------------\n`;
+        if (c.beneficios.length > 0) {
+            c.beneficios.forEach(b => {
+                let valor = b.sl ? "S/Límite" : "$" + montos[b.nombre.toLowerCase()];
+                msg += `✅ ${b.nombre}: ${valor}\n`;
+            });
+        }
+        msg += `🚚 Grúa: $${montoGrua}\n`;
+        msg += `--------------------------\n`;
+        msg += `_Sujeto a pautas de suscripción._`;
+
+        navigator.clipboard.writeText(msg).then(() => {
+            alert("¡Copiado para WhatsApp!");
+        });
+    }
+
+    function procesar() {
+        const anio = document.getElementById('txtAnio').value;
+        const sumaRaw = document.getElementById('txtSuma').value.replace(/\./g, "");
+        const suma = parseInt(sumaRaw) || 0;
+        const antig = anioHoy - anio;
+        const grid = document.getElementById('gridResultados');
+        const montos = tablaMontos[guiaActual];
+
+        grid.innerHTML = "";
+
+        const categorias = ["TODO RIESGO", "TERCEROS COMPLETO", "SOLO TOTALES", "BÁSICA"];
+        
+        categorias.forEach(cat => {
+            const cobsCat = coberturas.filter(c => c.cat === cat && antig <= c.max);
+            
+            if (cobsCat.length > 0) {
+                let catClass = "";
+                if (cat === "TODO RIESGO") catClass = "cat-tra";
+                else if (cat === "TERCEROS COMPLETO") catClass = "cat-c";
+                else if (cat === "SOLO TOTALES") catClass = "cat-b";
+                else if (cat === "BÁSICA") catClass = "cat-a";
+
+                grid.innerHTML += `<div class="cat-header ${catClass}">${cat}</div>`;
+                
+                cobsCat.forEach(c => {
+                    let fraInfo = "";
+                    let fraLabel = "";
+
+                    if (c.reqFra) {
+                        const fraObj = AUTFRA.find(f => f.id === c.id && suma >= f.desde && suma <= f.hasta);
+                        if (fraObj) {
+                            fraLabel = "$" + fraObj.monto.toLocaleString('es-AR');
+                            fraInfo = `<div class="franquicia-box">Franquicia: ${fraLabel}</div>`;
+                        } else {
+                            fraInfo = `<div class="franquicia-box" style="background:#fff7ed; color:#9a3412; border-color:#fdba74;">Ingresar suma para ver franquicia</div>`;
+                        }
+                    }
+
+                    let itemsHtml = "";
+                    if (c.beneficios.length > 0) {
+                        itemsHtml = c.beneficios.map(b => {
+                            let valor = b.sl ? `<span class="sl">S/LÍMITE</span>` : `<span class="val">$${montos[b.nombre.toLowerCase()]}</span>`;
+                            return `<li class="item-row"><span>✅ ${b.nombre}</span> <span class="evento-text">${b.evento}</span> ${valor}</li>`;
+                        }).join("");
+                    }
+
+                    let displayName = c.nom.split(' ').filter(word => word !== c.id).join(' ');
+                    let montoGrua = limitesGrua[c.id] || "Cons.";
+
+                    grid.innerHTML += `
+                        <div class="card ${c.id === 'D' || c.id === 'C2' || c.id === 'P' ? 'premium' : ''} ${c.id === 'P' || c.id === 'M' || c.id === 'D' ? 'tr' : ''}">
+                            <div class="card-header">
+                                <div class="header-left">
+                                    <span class="id-badge">${c.id}</span>
+                                    <span class="plan-name">${displayName}</span>
+                                </div>
+                                <span class="max-year">Antig. Máx: ${c.max} años</span>
+                            </div>
+                            
+                            ${fraInfo}
+
+                            <div class="base-tags">${c.base.map(b => `<span class="tag-cob">${b}</span>`).join('')}</div>
+
+                            <ul class="item-list">${itemsHtml}</ul>
+                            
+                            <div class="footer-row">
+                                <div class="grua-tag"><span>🚚 Grúa</span> <span>$${montoGrua}</span></div>
+                                <button class="btn-ws" onclick="copiarWhatsApp('${c.id}', '${fraLabel}')" title="Copiar para WhatsApp">📲</button>
+                            </div>
+                            
+                            <div class="nota-box">
+                                <b>INFO:</b> ${c.nota}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        });
+    }
+    procesar();
+</script>
+</body>
+</html>
