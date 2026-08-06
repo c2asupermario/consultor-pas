@@ -1,352 +1,327 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consultor PAS Pro - Versión Y</title>
-    <style>
-        :root { 
-            --primary: #1a5276; 
-            --secondary: #3498db;
-            --success: #27ae60; 
-            --danger: #e74c3c; 
-            --bg: #f4f7f6; 
-            --white: #ffffff;
-        }
-        
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 10px; color: #333; }
-        .container { max-width: 1200px; margin: auto; background: var(--white); padding: 15px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        
-        .top-panel { background: #f8f9fa; padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #edf2f7; max-width: 600px; margin-left: auto; margin-right: auto; }
-        .selector-guia { display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; }
-        .btn-guia { flex: 1; padding: 10px; border: 2px solid var(--primary); border-radius: 12px; cursor: pointer; background: white; color: var(--primary); font-weight: bold; font-size: 0.85rem; }
-        .btn-guia.active { background: var(--primary); color: white; }
-
-        .search-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .input-group { display: flex; flex-direction: column; gap: 4px; }
-        .input-group label { font-size: 0.7rem; font-weight: bold; color: #64748b; text-transform: uppercase; }
-        input { padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 1rem; text-align: center; outline: none; }
-        input:focus { border-color: var(--secondary); }
-
-        .grid-view { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 12px; }
-        .card { border: 2px solid #f0f4f8; border-radius: 16px; padding: 12px; background: #fff; position: relative; transition: border-color 0.2s; }
-        .card.premium { border-color: var(--success); }
-        .card.tr { border-color: var(--secondary); }
-        
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .header-left { display: flex; align-items: center; gap: 10px; }
-        .id-badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; min-width: 35px; text-align: center; }
-        .plan-name { font-weight: bold; color: var(--primary); font-size: 1.1rem; }
-        .max-year { font-size: 0.75rem; color: #7f8c8d; font-weight: bold; }
-        
-        .tag-cob { font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; background: #ebf2f7; color: var(--primary); border: 1px solid #d6e4ef; font-weight: bold; margin-right: 4px; margin-bottom: 4px; display: inline-block; }
-
-        .item-list { list-style: none; padding: 0; margin: 8px 0; font-size: 0.9rem; }
-        .item-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding: 2px 0; }
-        .evento-text { font-size: 0.8rem; color: #94a3b8; font-style: italic; flex-grow: 1; margin-left: 8px; }
-        
-        .val { font-weight: bold; color: var(--danger); }
-        .sl { color: var(--success); font-weight: bold; }
-        
-        .franquicia-box { background: #fff3f3; border: 1px solid #fecaca; color: #dc2626; padding: 8px; border-radius: 10px; margin-bottom: 10px; font-weight: bold; font-size: 0.95rem; text-align: center; }
-
-        .footer-row { display: flex; gap: 8px; margin-top: 10px; }
-        .grua-tag { flex: 1; font-size: 0.85rem; color: var(--primary); font-weight: bold; display: flex; justify-content: space-between; align-items: center; background: #e1f5fe; padding: 10px; border-radius: 10px; }
-        .btn-ws { background: #25d366; color: white; border: none; border-radius: 10px; padding: 0 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-
-        .nota-box { margin-top: 10px; padding-top: 8px; font-size: 0.75rem; color: #64748b; border-top: 1px solid #f1f5f9; }
-        
-        .cat-header { grid-column: 1 / -1; color: white; padding: 10px 18px; border-radius: 12px; font-size: 0.85rem; font-weight: 900; margin-top: 25px; text-transform: uppercase; letter-spacing: 1.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .cat-header:first-child { margin-top: 0; }
-
-        .cat-tra { background: linear-gradient(90deg, #c0392b, #e74c3c); border-left: 6px solid #922b21; }
-        .cat-c   { background: linear-gradient(90deg, #138d75, #1abc9c); border-left: 6px solid #0e6655; }
-        .cat-b   { background: linear-gradient(90deg, #d68910, #f39c12); border-left: 6px solid #9c640c; }
-        .cat-a   { background: linear-gradient(90deg, #2e4053, #5d6d7e); border-left: 6px solid #1c2833; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultor PAS - Beneficios Adicionales (Dinámico · Guía 60)</title>
+<style>
+:root{--primary:#1a5276;--secondary:#3498db;--success:#27ae60;--danger:#e74c3c;--bg:#f4f7f6;--white:#fff;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);margin:0;padding:10px;color:#333;}
+.container{max-width:1200px;margin:auto;background:var(--white);padding:15px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.05);}
+h1{font-size:1.1rem;color:var(--primary);text-align:center;margin:4px 0 2px;}
+.sub{text-align:center;font-size:.72rem;color:#94a3b8;margin-bottom:12px;}
+.top-panel{background:#f8f9fa;padding:15px;border-radius:15px;margin-bottom:15px;border:1px solid #edf2f7;max-width:600px;margin-left:auto;margin-right:auto;}
+.search-box{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.input-group{display:flex;flex-direction:column;gap:4px;}
+.input-group label{font-size:.7rem;font-weight:bold;color:#64748b;text-transform:uppercase;}
+input{padding:12px;border:1px solid #e2e8f0;border-radius:10px;font-size:1rem;text-align:center;outline:none;}
+input:focus{border-color:var(--secondary);}
+.grid-view{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:12px;}
+.card{border:2px solid #f0f4f8;border-radius:16px;padding:12px;background:#fff;position:relative;}
+.card.premium{border-color:var(--success);}
+.card.tr{border-color:var(--secondary);}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.header-left{display:flex;align-items:center;gap:10px;}
+.id-badge{background:var(--primary);color:#fff;padding:4px 10px;border-radius:8px;font-weight:bold;font-size:1.1rem;min-width:35px;text-align:center;}
+.plan-name{font-weight:bold;color:var(--primary);font-size:1.05rem;}
+.max-year{font-size:.75rem;color:#7f8c8d;font-weight:bold;}
+.tag-cob{font-size:.7rem;padding:3px 8px;border-radius:6px;background:#ebf2f7;color:var(--primary);border:1px solid #d6e4ef;font-weight:bold;margin-right:4px;margin-bottom:4px;display:inline-block;}
+.item-list{list-style:none;padding:0;margin:8px 0;font-size:.9rem;}
+.item-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;padding:2px 0;border-bottom:1px dashed #f1f5f9;}
+.ben-name{white-space:nowrap;}
+.evento-text{font-size:.78rem;color:#94a3b8;font-style:italic;flex-grow:1;margin-left:8px;text-align:right;}
+.val{font-weight:bold;color:var(--danger);margin-left:8px;}
+.sl{color:var(--success);font-weight:bold;margin-left:8px;}
+.inc{color:var(--success);font-weight:bold;margin-left:8px;}
+.sin-ben{font-size:.8rem;color:#94a3b8;font-style:italic;padding:6px 0;}
+.aviso-suma{grid-column:1/-1;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;padding:12px 16px;border-radius:12px;font-size:.85rem;text-align:center;margin-bottom:8px;}
+.franquicia-box{background:#fff3f3;border:1px solid #fecaca;color:#dc2626;padding:8px;border-radius:10px;margin-bottom:10px;font-weight:bold;font-size:.9rem;text-align:center;}
+.franquicia-box.sinf{background:#ecfdf5;border-color:#a7f3d0;color:#047857;}
+.franquicia-box.pend{background:#fff7ed;border-color:#fdba74;color:#9a3412;}
+.footer-row{display:flex;gap:8px;margin-top:10px;}
+.grua-tag{flex:1;font-size:.82rem;color:var(--primary);font-weight:bold;display:flex;justify-content:space-between;align-items:center;background:#e1f5fe;padding:10px;border-radius:10px;gap:6px;}
+.btn-ws{background:#25d366;color:#fff;border:none;border-radius:10px;padding:0 15px;cursor:pointer;font-size:1.2rem;}
+.cat-header{grid-column:1/-1;color:#fff;padding:10px 18px;border-radius:12px;font-size:.85rem;font-weight:900;margin-top:25px;text-transform:uppercase;letter-spacing:1.5px;}
+.cat-header:first-child{margin-top:0;}
+.cat-tra{background:linear-gradient(90deg,#c0392b,#e74c3c);border-left:6px solid #922b21;}
+.cat-c{background:linear-gradient(90deg,#138d75,#1abc9c);border-left:6px solid #0e6655;}
+.cat-b{background:linear-gradient(90deg,#d68910,#f39c12);border-left:6px solid #9c640c;}
+.cat-a{background:linear-gradient(90deg,#2e4053,#5d6d7e);border-left:6px solid #1c2833;}
+.view-toggle{text-align:center;margin-bottom:14px;}
+.btn-toggle{background:var(--primary);color:#fff;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;font-size:.85rem;font-weight:bold;}
+.btn-toggle:hover{background:#154360;}
+.tabla-wrap{overflow-x:auto;}
+table.cuadro{border-collapse:collapse;width:100%;font-size:.74rem;}
+table.cuadro th,table.cuadro td{border:1px solid #a8b4c0;padding:5px 6px;text-align:center;white-space:nowrap;}
+table.cuadro thead th{background:#ebf2f7;color:var(--primary);position:sticky;top:0;border-bottom:2px solid var(--primary);}
+table.cuadro th.ben-col,table.cuadro td.ben-col{text-align:left;position:sticky;left:0;background:#fff;font-weight:bold;min-width:190px;white-space:normal;z-index:2;}
+table.cuadro thead th.ben-col{z-index:3;}
+table.cuadro small{color:#333;font-style:italic;}
+table.cuadro .sl{color:var(--success);font-weight:bold;}
+table.cuadro .val{color:var(--danger);font-weight:bold;}
+table.cuadro .no{color:#cbd5e1;}
+table.cuadro th.cat-tra{background:#fdecea;color:#922b21;}
+table.cuadro th.cat-c{background:#e8f8f5;color:#0e6655;}
+table.cuadro th.cat-b{background:#fef5e7;color:#9c640c;}
+table.cuadro th.cat-a{background:#eaeded;color:#1c2833;}
+table.cuadro tr.fila-franquicia td{background:#fff3f3;}
+table.cuadro tr.fila-franquicia td.ben-col{background:#fff3f3;color:#dc2626;}
+table.cuadro tr.fila-franquicia small{color:#c0392b;}
+table.cuadro tbody tr:nth-child(even):not(.fila-franquicia) td{background:#e8ecef;}
+table.cuadro tbody tr:nth-child(even):not(.fila-franquicia) td.ben-col{background:#dde3e8;}
+details.grupo-cuadro{margin-bottom:2px;}
+details.grupo-cuadro summary.cat-header{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;margin-top:25px;}
+details.grupo-cuadro:first-of-type summary.cat-header{margin-top:0;}
+details.grupo-cuadro summary.cat-header::-webkit-details-marker{display:none;}
+details.grupo-cuadro summary.cat-header::after{content:'▾';font-size:1rem;margin-left:8px;}
+details.grupo-cuadro:not([open]) summary.cat-header::after{content:'▸';}
+</style>
 </head>
 <body>
-
 <div class="container">
-    <div class="top-panel">
-        <div class="selector-guia">
-            <button class="btn-guia active" onclick="setGuia('59', this)">GUÍA 59 (ABRIL)</button>
-            <button class="btn-guia" onclick="setGuia('60', this)">GUÍA 60 (MAYO)</button>
-        </div>
-        <div class="search-box">
-            <div class="input-group">
-                <label>Año Modelo</label>
-                <input type="number" id="txtAnio" value="2015" oninput="procesar()">
-            </div>
-            <div class="input-group">
-                <label>Suma Asegurada ($)</label>
-                <input type="text" id="txtSuma" placeholder="Ej: 25.000.000" oninput="formatearMoneda(this); procesar()">
-            </div>
-        </div>
-    </div>
-
-    <div id="gridResultados" class="grid-view"></div>
+<h1>Consultor PAS · Beneficios Adicionales</h1>
+<div class="sub">Guía 60 · AUTOS · datos dinámicos AutBen_Adi + AutFra (regla: monto / Sin Límite / oculto)</div>
+<div class="view-toggle"><button class="btn-toggle" id="btnToggle" onclick="toggleVista()">📊 Ver Cuadro Comparativo</button></div>
+<div id="topPanel" class="top-panel">
+<div class="search-box">
+<div class="input-group"><label>Año Modelo</label><input type="number" id="txtAnio" value="2018" oninput="procesar()"></div>
+<div class="input-group"><label>Suma Asegurada ($)</label><input type="text" id="txtSuma" placeholder="Ej: 25.000.000" oninput="fmtMoneda(this);procesar()"></div>
 </div>
-
+</div>
+<div id="grid" class="grid-view"></div>
+<div id="cuadro" style="display:none"></div>
+</div>
 <script>
-    let guiaActual = '59';
-    const anioHoy = 2026;
+const DATA = [{"pkba":1,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"A","NomFantasia":"RC","Resumen Cobertura":"Responsabilidad Civil","Max_Antig":15,"Grua_antig":15,"Grua_km":50,"Grua_mes":1,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"","repo_rueda":"","Cerraduras_Suma":0,"Cerraduras_eventos":"","Daño_parcial_x_Robo":0,"Crista_late_Suma":0,"Crista_late_Eventos":"","Parabrisas_Suma":0,"Parabrisas_Eventos":"","Granizo_Suma":0,"Granizo_Eventos":"","Gestoria_Suma":0,"AP_Suma":0,"AP_Suma_max":0,"NO_Franquicia":0},{"pkba":2,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"A1","NomFantasia":"RC + I","Resumen Cobertura":"RC + Inc. Total","Max_Antig":25,"Grua_antig":25,"Grua_km":100,"Grua_mes":2,"Grua_anual":8,"Grua_Montoext":60000,"repo_nvo":"","repo_rueda":"","Cerraduras_Suma":0,"Cerraduras_eventos":"","Daño_parcial_x_Robo":0,"Crista_late_Suma":0,"Crista_late_Eventos":"","Parabrisas_Suma":0,"Parabrisas_Eventos":"","Granizo_Suma":0,"Granizo_Eventos":"","Gestoria_Suma":0,"AP_Suma":0,"AP_Suma_max":0,"NO_Franquicia":0},{"pkba":3,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"B","NomFantasia":"B Totales Básico","Resumen Cobertura":"RC. + Robo Total, Inc. Total, Acc. Total","Max_Antig":25,"Grua_antig":25,"Grua_km":100,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"","repo_rueda":"","Cerraduras_Suma":0,"Cerraduras_eventos":"","Daño_parcial_x_Robo":0,"Crista_late_Suma":0,"Crista_late_Eventos":"","Parabrisas_Suma":0,"Parabrisas_Eventos":"","Granizo_Suma":0,"Granizo_Eventos":"","Gestoria_Suma":0,"AP_Suma":0,"AP_Suma_max":0,"NO_Franquicia":0},{"pkba":4,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"B1","NomFantasia":"B1 Totales","Resumen Cobertura":"RC. + Robo Total, Inc. Total","Max_Antig":25,"Grua_antig":25,"Grua_km":100,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"","repo_rueda":"","Cerraduras_Suma":0,"Cerraduras_eventos":"","Daño_parcial_x_Robo":0,"Crista_late_Suma":0,"Crista_late_Eventos":"","Parabrisas_Suma":0,"Parabrisas_Eventos":"","Granizo_Suma":0,"Granizo_Eventos":"","Gestoria_Suma":0,"AP_Suma":0,"AP_Suma_max":0,"NO_Franquicia":0},{"pkba":5,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"B2","NomFantasia":"B2 Totales Básico","Resumen Cobertura":"RC. + Robo Total, Inc. T/P","Max_Antig":25,"Grua_antig":25,"Grua_km":200,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"","repo_rueda":"","Cerraduras_Suma":0,"Cerraduras_eventos":"","Daño_parcial_x_Robo":0,"Crista_late_Suma":0,"Crista_late_Eventos":"","Parabrisas_Suma":0,"Parabrisas_Eventos":"","Granizo_Suma":0,"Granizo_Eventos":"","Gestoria_Suma":0,"AP_Suma":0,"AP_Suma_max":0,"NO_Franquicia":0},{"pkba":6,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"C","NomFantasia":"C Clásico","Resumen Cobertura":"RC. + Robo T/P, Inc. T/P, Daño Total","Max_Antig":16,"Grua_antig":25,"Grua_km":200,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"NO","repo_rueda":"SI","Cerraduras_Suma":300000,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":0,"Crista_late_Suma":300000,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":520000,"Parabrisas_Eventos":"1 x año","Granizo_Suma":786000,"Granizo_Eventos":"2 x año","Gestoria_Suma":0,"AP_Suma":0,"AP_Suma_max":0,"NO_Franquicia":0},{"pkba":7,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"C1","NomFantasia":"C1 Terceros","Resumen Cobertura":"RC. + Robo T/P, Inc. T/P","Max_Antig":18,"Grua_antig":25,"Grua_km":200,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"NO","repo_rueda":"SI","Cerraduras_Suma":300000,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":0,"Crista_late_Suma":300000,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":520000,"Parabrisas_Eventos":"1 x año","Granizo_Suma":786000,"Granizo_Eventos":"2 x año","Gestoria_Suma":0,"AP_Suma":0,"AP_Suma_max":0,"NO_Franquicia":0},{"pkba":8,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"C2","NomFantasia":"C2 Premium","Resumen Cobertura":"RC. + Robo T/P, Inc. T/P, Daño Total","Max_Antig":14,"Grua_antig":25,"Grua_km":400,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"SI","repo_rueda":"SI","Cerraduras_Suma":-1,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":786000,"Crista_late_Suma":-1,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":-1,"Parabrisas_Eventos":"1 x año","Granizo_Suma":-1,"Granizo_Eventos":"2 x año","Gestoria_Suma":300000,"AP_Suma":60000,"AP_Suma_max":120000,"NO_Franquicia":120000},{"pkba":9,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"D","NomFantasia":"TRA con Fcia","Resumen Cobertura":"RC. +  Robo T/P, Inc. T/P, Daño T/P con Fcia","Max_Antig":6,"Grua_antig":25,"Grua_km":400,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"SI","repo_rueda":"SI","Cerraduras_Suma":-1,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":786000,"Crista_late_Suma":-1,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":-1,"Parabrisas_Eventos":"1 x año","Granizo_Suma":-1,"Granizo_Eventos":"2 x año","Gestoria_Suma":300000,"AP_Suma":60000,"AP_Suma_max":120000,"NO_Franquicia":0},{"pkba":10,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"J","NomFantasia":"TRA con Fcia","Resumen Cobertura":"RC. +  Robo T/P, Inc. T/P, Daño T/P con Fcia","Max_Antig":10,"Grua_antig":25,"Grua_km":400,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"SI","repo_rueda":"SI","Cerraduras_Suma":-1,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":960000,"Crista_late_Suma":-1,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":-1,"Parabrisas_Eventos":"1 x año","Granizo_Suma":-1,"Granizo_Eventos":"2 x año","Gestoria_Suma":300000,"AP_Suma":60000,"AP_Suma_max":120000,"NO_Franquicia":0},{"pkba":11,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"J1","NomFantasia":"TRA con Fcia","Resumen Cobertura":"RC. +  Robo T/P, Inc. T/P, Daño T/P con Fcia","Max_Antig":10,"Grua_antig":25,"Grua_km":400,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"SI","repo_rueda":"SI","Cerraduras_Suma":-1,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":960000,"Crista_late_Suma":-1,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":-1,"Parabrisas_Eventos":"1 x año","Granizo_Suma":-1,"Granizo_Eventos":"2 x año","Gestoria_Suma":300000,"AP_Suma":60000,"AP_Suma_max":120000,"NO_Franquicia":0},{"pkba":12,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"J2","NomFantasia":"TRA con Fcia","Resumen Cobertura":"RC. +  Robo T/P, Inc. T/P, Daño T/P con Fcia","Max_Antig":6,"Grua_antig":25,"Grua_km":-1,"Grua_mes":2,"Grua_anual":8,"Grua_Montoext":260000,"repo_nvo":"SI","repo_rueda":"SI","Cerraduras_Suma":-1,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":786000,"Crista_late_Suma":-1,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":-1,"Parabrisas_Eventos":"2 x año","Granizo_Suma":-1,"Granizo_Eventos":"2 x año","Gestoria_Suma":300000,"AP_Suma":175000,"AP_Suma_max":525000,"NO_Franquicia":6395000},{"pkba":13,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"J3","NomFantasia":"TRA con Fcia","Resumen Cobertura":"RC. +  Robo T/P, Inc. T/P, Daño T/P con Fcia","Max_Antig":6,"Grua_antig":25,"Grua_km":-1,"Grua_mes":2,"Grua_anual":8,"Grua_Montoext":260000,"repo_nvo":"SI","repo_rueda":"SI","Cerraduras_Suma":-1,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":960000,"Crista_late_Suma":-1,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":-1,"Parabrisas_Eventos":"2 x año","Granizo_Suma":-1,"Granizo_Eventos":"2 x año","Gestoria_Suma":300000,"AP_Suma":175000,"AP_Suma_max":525000,"NO_Franquicia":10807000},{"pkba":14,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"M","NomFantasia":"TRA con Fcia","Resumen Cobertura":"RC. +  Robo T/P, Inc. T/P, Daño T/P con Fcia","Max_Antig":10,"Grua_antig":25,"Grua_km":400,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"SI","repo_rueda":"SI","Cerraduras_Suma":-1,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":960000,"Crista_late_Suma":-1,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":-1,"Parabrisas_Eventos":"1 x año","Granizo_Suma":-1,"Granizo_Eventos":"2 x año","Gestoria_Suma":300000,"AP_Suma":60000,"AP_Suma_max":120000,"NO_Franquicia":0},{"pkba":15,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"O","NomFantasia":"TRA con Fcia","Resumen Cobertura":"RC. +  Robo T/P, Inc. T/P, Daño T/P con Fcia","Max_Antig":12,"Grua_antig":25,"Grua_km":400,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"SI","repo_rueda":"SI","Cerraduras_Suma":-1,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":960000,"Crista_late_Suma":-1,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":-1,"Parabrisas_Eventos":"1 x año","Granizo_Suma":-1,"Granizo_Eventos":"2 x año","Gestoria_Suma":300000,"AP_Suma":60000,"AP_Suma_max":120000,"NO_Franquicia":0},{"pkba":16,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"P","NomFantasia":"TRA con Fcia","Resumen Cobertura":"RC. +  Robo T/P, Inc. T/P, Daño T/P con Fcia","Max_Antig":12,"Grua_antig":25,"Grua_km":400,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"SI","repo_rueda":"SI","Cerraduras_Suma":-1,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":960000,"Crista_late_Suma":-1,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":-1,"Parabrisas_Eventos":"1 x año","Granizo_Suma":-1,"Granizo_Eventos":"2 x año","Gestoria_Suma":300000,"AP_Suma":60000,"AP_Suma_max":120000,"NO_Franquicia":0},{"pkba":17,"pkcia":169,"codpria":2,"TIPO":"AUTOS","Guia":60,"GrupoCob":"F","NomFantasia":"TRA SIN Fcia","Resumen Cobertura":"RC. +  Robo T/P, Inc. T/P, Daño T/P SIN Fcia","Max_Antig":13,"Grua_antig":25,"Grua_km":400,"Grua_mes":2,"Grua_anual":6,"Grua_Montoext":60000,"repo_nvo":"SI","repo_rueda":"SI","Cerraduras_Suma":-1,"Cerraduras_eventos":"1 x año","Daño_parcial_x_Robo":960000,"Crista_late_Suma":-1,"Crista_late_Eventos":"1 x año","Parabrisas_Suma":-1,"Parabrisas_Eventos":"1 x año","Granizo_Suma":-1,"Granizo_Eventos":"2 x año","Gestoria_Suma":300000,"AP_Suma":60000,"AP_Suma_max":120000,"NO_Franquicia":0}];
+const FRA  = [{"cob":"D","desde":0,"hasta":9999999999,"monto":450000},{"cob":"J","desde":0,"hasta":9999999999,"monto":550000},{"cob":"M","desde":0,"hasta":21499999,"monto":615000},{"cob":"M","desde":21500000,"hasta":9999999999,"monto":700000},{"cob":"J1","desde":0,"hasta":21499999,"monto":700000},{"cob":"J1","desde":21500000,"hasta":127699999,"monto":780000},{"cob":"J1","desde":127700000,"hasta":239999999,"monto":1265000},{"cob":"J1","desde":240000000,"hasta":9999999999,"monto":2130000},{"cob":"J2","desde":0,"hasta":9999999999,"monto":780000},{"cob":"J3","desde":0,"hasta":9999999999,"monto":1185000},{"cob":"P","desde":0,"hasta":14199999,"monto":645000},{"cob":"P","desde":14200000,"hasta":23099999,"monto":805000},{"cob":"P","desde":23100000,"hasta":36799999,"monto":1030000},{"cob":"P","desde":36800000,"hasta":52499999,"monto":1330000},{"cob":"P","desde":52500000,"hasta":83999999,"monto":1515000},{"cob":"P","desde":84000000,"hasta":104999999,"monto":2415000},{"cob":"P","desde":105000000,"hasta":9999999999,"monto":4230000},{"cob":"O","desde":0,"hasta":14199999,"monto":1330000},{"cob":"O","desde":14200000,"hasta":23099999,"monto":1515000},{"cob":"O","desde":23100000,"hasta":36799999,"monto":1800000},{"cob":"O","desde":36800000,"hasta":52499999,"monto":2415000},{"cob":"O","desde":52500000,"hasta":83999999,"monto":2720000},{"cob":"O","desde":84000000,"hasta":104999999,"monto":4230000},{"cob":"O","desde":105000000,"hasta":9999999999,"monto":5450000}];
+const ANIO_HOY = 2026;
 
-    const tablaMontos = {
-        '59': { granizo: "630.000", cristales: "242.000", cerraduras: "242.000", parabrisas: "410.000" },
-        '60': { granizo: "710.000", cristales: "275.000", cerraduras: "275.000", parabrisas: "465.000" }
-    };
+const CATS = [
+  {nombre:'TODO RIESGO', cls:'cat-tra', grupos:['F','P','O','M','D','J','J1','J2','J3']},
+  {nombre:'TERCEROS COMPLETO', cls:'cat-c', grupos:['C2','C','C1']},
+  {nombre:'SOLO TOTALES', cls:'cat-b', grupos:['B2','B','B1']},
+  {nombre:'BÁSICA', cls:'cat-a', grupos:['A1','A']}
+];
 
-    const limitesGrua = {
-        'D': "180.000",
-        'P': "180.000",
-        'M': "180.000",
-        'F': "250.000",
-        'C2': "180.000",
-        'C': "150.000",
-        'C1': "150.000",
-        'B4': "120.000",
-        'B': "120.000",
-        'B1': "120.000",
-        'A1': "60.000",
-        'A': "60.000"
-    };
+const BEN = [
+  {k:'repo_nvo',            l:'Reposición a Nuevo (Unidad)', bool:true},
+  {k:'repo_rueda',          l:'Reposición a Nuevo (Ruedas)', bool:true},
+  {k:'Granizo_Suma',        ev:'Granizo_Eventos',     l:'Granizo'},
+  {k:'Crista_late_Suma',    ev:'Crista_late_Eventos', l:'Cristales Laterales'},
+  {k:'Parabrisas_Suma',     ev:'Parabrisas_Eventos',  l:'Parabrisas / Lunetas'},
+  {k:'Cerraduras_Suma',     ev:'Cerraduras_eventos',  l:'Cerraduras'},
+  {k:'Daño_parcial_x_Robo', l:'Daño Parcial x Robo Total'},
+  {k:'Gestoria_Suma',       l:'Gestoría en Siniestro'},
+  {k:'NO_Franquicia',       l:'Sin Franq. fija si daño supera'}
+];
 
-    const AUTFRA = [
-        { id: "M", desde: 0, hasta: 20434999, monto: 535000 },
-        { id: "M", desde: 20435000, hasta: 999999999, monto: 600000 },
-        { id: "P", desde: 0, hasta: 13489999, monto: 675000 },
-        { id: "P", desde: 13490000, hasta: 199999999, monto: 785000 },
-        { id: "P", desde: 20000000, hasta: 349999999, monto: 895000 }
-    ];
+const GRUPOS_CON_FCIA = ['D','J','J1','J2','J3','M','O','P'];
 
-    const coberturas = [
-        { 
-            id: "D", cat: "TODO RIESGO", nom: "Todo Riesgo Variable", max: 6, reqFra: false,
-            base: ["RC", "Robo T/P", "Inc. T/P", "Daño T/P"],
-            beneficios: [
-                { nombre: "Granizo", evento: "Sin Límite", sl: true },
-                { nombre: "Cristales", evento: "S/L - 1 Evento", sl: true },
-                { nombre: "Cerraduras", evento: "Sin Límite", sl: true }
-            ],
-            nota: "Franquicia fija según pauta comercial vigente."
-        },
-        { 
-            id: "F", cat: "TODO RIESGO", nom: "TR Sin Franquicia", max: 10, reqFra: false,
-            base: ["RC", "Robo T/P", "Inc. T/P", "Daño T/P (S/F)"],
-            beneficios: [
-                { nombre: "Granizo", evento: "Sin Límite", sl: true },
-                { nombre: "Cristales", evento: "Sin Límite", sl: true }
-            ],
-            nota: "Cobertura máxima sin deducibles."
-        },
-        { 
-            id: "P", cat: "TODO RIESGO", nom: "TR con Franquicia P", max: 13, reqFra: true,
-            base: ["RC", "Robo T/P", "Inc. T/P", "Daño T/P con Franq."],
-            beneficios: [
-                { nombre: "Granizo", evento: "Monto s/Guía", sl: false },
-                { nombre: "Cristales", evento: "1 Evento anual", sl: false }
-            ],
-            nota: "Deducible escalonado según suma asegurada."
-        },
-        { 
-            id: "M", cat: "TODO RIESGO", nom: "TR con Franquicia M", max: 12, reqFra: true,
-            base: ["RC", "Robo T/P", "Inc. T/P", "Daño T/P con Franq."],
-            beneficios: [
-                { nombre: "Granizo", evento: "Monto s/Guía", sl: false },
-                { nombre: "Cristales", evento: "1 Evento anual", sl: false }
-            ],
-            nota: "Deducible escalonado según suma asegurada."
-        },
-        { 
-            id: "C2", cat: "TERCEROS COMPLETO", nom: "C2 Premium", max: 14, reqFra: false,
-            base: ["RC", "Robo T/P", "Inc. T/P", "Daño Total"],
-            beneficios: [
-                { nombre: "Granizo", evento: "Hasta Lim. Máx", sl: false },
-                { nombre: "Cristales", evento: "1 Evento anual", sl: false },
-                { nombre: "Parabrisas", evento: "Sin Límite", sl: true }
-            ],
-            nota: "Requiere verificación técnica previa."
-        },
-        { 
-            id: "C", cat: "TERCEROS COMPLETO", nom: "C Terceros Completo", max: 16, reqFra: false,
-            base: ["RC", "Robo T/P", "Inc. T/P", "Daño Total"],
-            beneficios: [
-                { nombre: "Granizo", evento: "1 por año", sl: false },
-                { nombre: "Cristales", evento: "1 por año", sl: false }
-            ],
-            nota: "Terceros Completo con límites standard."
-        },
-        { 
-            id: "C1", cat: "TERCEROS COMPLETO", nom: "C1 Terceros", max: 18, reqFra: false,
-            base: ["RC", "Robo T/P", "Inc. T/P", "Daño Total"],
-            beneficios: [
-                { nombre: "Granizo", evento: "Hasta Lim. Máx", sl: false },
-                { nombre: "Cristales", evento: "1 por año", sl: false }
-            ],
-            nota: "Antigüedad extendida."
-        },
-        { 
-            id: "B4", cat: "SOLO TOTALES", nom: "B4 Tradicional", max: 15, reqFra: false,
-            base: ["RC", "Robo Total", "Inc. Total", "Daño Total"],
-            beneficios: [
-                { nombre: "Granizo", evento: "1 por año", sl: false },
-                { nombre: "Cristales", evento: "1 por año", sl: false }
-            ],
-            nota: "Cobertura clásica con límites fijos."
-        },
-        { 
-            id: "B", cat: "SOLO TOTALES", nom: "B Básico + DT", max: 20, reqFra: false,
-            base: ["RC", "Robo Total", "Inc. Total", "Daño Total (DT)"],
-            beneficios: [],
-            nota: "Cubre Robo/Incendio y Destrucción Total por Accidente."
-        },
-        { 
-            id: "B1", cat: "SOLO TOTALES", nom: "B1 Solo Totales", max: 20, reqFra: false,
-            base: ["RC", "Robo Total", "Inc. Total"],
-            beneficios: [],
-            nota: "EXCLUYE Destrucción Total por Accidente."
-        },
-        { 
-            id: "A1", cat: "BÁSICA", nom: "Solo RC (Incendio A1)", max: 50, reqFra: false,
-            base: ["RC (Obligatoria)", "Incendio (A1)"],
-            beneficios: [],
-            nota: "Ideal para unidades de antigüedad extendida (hasta 50 años)."
-        },
-        { 
-            id: "A", cat: "BÁSICA", nom: "A Responsabilidad Civil", max: 30, reqFra: false,
-            base: ["RC (Obligatoria)"],
-            beneficios: [],
-            nota: "Cobertura mínima obligatoria."
-        }
-    ];
+function fmtMoneda(input){let v=input.value.replace(/\D/g,'');input.value=v?parseInt(v).toLocaleString('es-AR'):'';}
+function pesos(n){return '$'+Number(n).toLocaleString('es-AR');}
 
-    function formatearMoneda(input) {
-        let value = input.value.replace(/\D/g, "");
-        if (value) {
-            input.value = parseInt(value).toLocaleString('es-AR');
+function fmt(v){
+  if(v===-1) return {t:'SIN LÍMITE', c:'sl'};
+  if(typeof v==='number' && v>0) return {t:pesos(v), c:'val'};
+  return null;
+}
+
+function buscarFranquicia(cob, suma){
+  if(suma<=0) return null;
+  const f=FRA.find(x=>x.cob===cob && suma>=x.desde && suma<=x.hasta);
+  return f?f.monto:null;
+}
+
+function lineasBeneficios(c){
+  let html='';
+  for(const b of BEN){
+    if(b.bool){
+      if(String(c[b.k]).toUpperCase()==='SI')
+        html+='<li class="item-row"><span class="ben-name">✅ '+b.l+'</span><span class="inc">INCLUIDO</span></li>';
+      continue;
+    }
+    const f=fmt(c[b.k]);
+    if(!f) continue;
+    const ev = b.ev && c[b.ev] ? '<span class="evento-text">'+c[b.ev]+'</span>' : '';
+    html+='<li class="item-row"><span class="ben-name">✅ '+b.l+'</span>'+ev+'<span class="'+f.c+'">'+f.t+'</span></li>';
+  }
+  if(typeof c.AP_Suma==='number' && c.AP_Suma>0){
+    const det = (typeof c.AP_Suma_max==='number'&&c.AP_Suma_max>0)?' · máx '+pesos(c.AP_Suma_max):'';
+    html+='<li class="item-row"><span class="ben-name">✅ Accidentes Personales</span><span class="evento-text">x persona'+det+'</span><span class="val">'+pesos(c.AP_Suma)+'</span></li>';
+  }
+  if(!html) html='<div class="sin-ben">Cobertura básica · sin beneficios adicionales</div>';
+  return html;
+}
+
+function gruaTxt(c){
+  const km = c.Grua_km===-1 ? 'Sin límite' : c.Grua_km+' km';
+  return km+' · '+c.Grua_mes+'/mes · '+c.Grua_anual+'/año';
+}
+
+function msgWhatsApp(c, antig, suma, fraTxt){
+  let m='*Cooperación Seguros - '+c.NomFantasia+'* ('+c.GrupoCob+')\n';
+  m+='🚗 Unidad antig. '+antig+' años (máx '+c.Max_Antig+')\n';
+  if(suma>0) m+='💰 Suma: '+pesos(suma)+'\n';
+  if(fraTxt) m+='🔴 '+fraTxt+'\n';
+  m+='--------------------------\n';
+  for(const b of BEN){
+    if(b.bool){ if(String(c[b.k]).toUpperCase()==='SI') m+='✅ '+b.l+'\n'; continue; }
+    const f=fmt(c[b.k]); if(!f) continue;
+    const ev=b.ev&&c[b.ev]?' ('+c[b.ev]+')':'';
+    m+='✅ '+b.l+': '+f.t.replace('SIN LÍMITE','Sin Límite')+ev+'\n';
+  }
+  if(typeof c.AP_Suma==='number'&&c.AP_Suma>0) m+='✅ Accidentes Personales: '+pesos(c.AP_Suma)+' x persona\n';
+  m+='🚚 Grúa: '+gruaTxt(c)+'\n--------------------------\n_Sujeto a pautas de suscripción._';
+  return m;
+}
+
+function copiar(idx){
+  const c=window.__rows[idx];
+  navigator.clipboard.writeText(c.__msg).then(()=>alert('¡Copiado para WhatsApp!'));
+}
+
+function procesar(){
+  const anio=parseInt(document.getElementById('txtAnio').value)||ANIO_HOY;
+  const suma=parseInt(document.getElementById('txtSuma').value.replace(/\./g,''))||0;
+  const antig=ANIO_HOY-anio;
+  const soloA = suma<=0; // sin suma asegurada solo se cotiza la RC básica (A)
+  const grid=document.getElementById('grid');
+  grid.innerHTML='';
+  window.__rows=[]; let idx=0;
+
+  if(soloA) grid.innerHTML='<div class="aviso-suma">Ingresá la <b>suma asegurada</b> para cotizar las demás coberturas. Sin suma solo se ofrece la <b>RC Básica (A)</b>.</div>';
+
+  for(const cat of CATS){
+    const cobs = cat.grupos
+      .map(g=>DATA.find(d=>d.GrupoCob===g))
+      .filter(c=>c && antig<=c.Max_Antig && (!soloA || c.GrupoCob==='A'));
+    if(!cobs.length) continue;
+    grid.innerHTML+='<div class="cat-header '+cat.cls+'">'+cat.nombre+'</div>';
+    for(const c of cobs){
+      let fraTxt='', fraBox='';
+      if(GRUPOS_CON_FCIA.includes(c.GrupoCob)){
+        const monto=buscarFranquicia(c.GrupoCob, suma);
+        if(monto!==null){
+          fraTxt='Franquicia: '+pesos(monto);
+          fraBox='<div class="franquicia-box">🔴 '+fraTxt+'</div>';
         } else {
-            input.value = "";
+          fraBox='<div class="franquicia-box pend">Ingresá la suma asegurada para ver la franquicia</div>';
         }
+      } else if(c.GrupoCob==='F'){
+        fraTxt='Todo Riesgo SIN Franquicia';
+        fraBox='<div class="franquicia-box sinf">✔ '+fraTxt+'</div>';
+      }
+      const tags=String(c['Resumen Cobertura']).split(',').map(t=>'<span class="tag-cob">'+t.trim()+'</span>').join('');
+      const premium=['F','D','P','C2'].includes(c.GrupoCob)?'premium':'';
+      const tr=GRUPOS_CON_FCIA.includes(c.GrupoCob)?'tr':'';
+      c.__msg=msgWhatsApp(c,antig,suma,fraTxt);
+      window.__rows[idx]=c;
+      grid.innerHTML+=
+        '<div class="card '+premium+' '+tr+'">'+
+          '<div class="card-header">'+
+            '<div class="header-left"><span class="id-badge">'+c.GrupoCob+'</span><span class="plan-name">'+c.NomFantasia+'</span></div>'+
+            '<span class="max-year">Antig. Máx: '+c.Max_Antig+' años</span>'+
+          '</div>'+
+          fraBox+
+          '<div>'+tags+'</div>'+
+          '<ul class="item-list">'+lineasBeneficios(c)+'</ul>'+
+          '<div class="footer-row">'+
+            '<div class="grua-tag"><span>🚚 Grúa</span><span>'+gruaTxt(c)+'</span></div>'+
+            '<button class="btn-ws" onclick="copiar('+idx+')" title="Copiar para WhatsApp">📲</button>'+
+          '</div>'+
+        '</div>';
+      idx++;
     }
+  }
+  if(!grid.innerHTML) grid.innerHTML='<div class="sub">No hay coberturas disponibles para esa antigüedad.</div>';
+}
+procesar();
 
-    function setGuia(v, btn) {
-        guiaActual = v;
-        document.querySelectorAll('.btn-guia').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        procesar();
+let vistaActual='tarjetas';
+function toggleVista(){
+  vistaActual = vistaActual==='tarjetas' ? 'cuadro' : 'tarjetas';
+  document.getElementById('topPanel').style.display = vistaActual==='tarjetas' ? '' : 'none';
+  document.getElementById('grid').style.display = vistaActual==='tarjetas' ? '' : 'none';
+  document.getElementById('cuadro').style.display = vistaActual==='cuadro' ? '' : 'none';
+  document.getElementById('btnToggle').textContent = vistaActual==='tarjetas' ? '📊 Ver Cuadro Comparativo' : '🎴 Ver Tarjetas';
+  if(vistaActual==='cuadro') renderCuadro();
+}
+
+function boolTxt(v){
+  const s=String(v).toUpperCase();
+  if(s==='SI') return '<span class="sl">SI</span>';
+  if(s==='NO') return '<span class="no">NO</span>';
+  return '<span class="no">—</span>';
+}
+function montoEv(v, ev){
+  if(v===-1) return '<span class="sl">SIN LÍMITE</span>'+(ev?'<br><small>'+ev+'</small>':'');
+  if(typeof v==='number' && v>0) return '<span class="val">'+pesos(v)+'</span>'+(ev?'<br><small>'+ev+'</small>':'');
+  return '<span class="no">—</span>';
+}
+function gruaCuadroTxt(c){
+  const km = c.Grua_km===-1 ? 'Sin límite' : c.Grua_km+' km';
+  const cls = c.Grua_km===-1 ? 'sl' : 'val';
+  return '<span class="'+cls+'">'+km+'</span><br><small>'+c.Grua_mes+'/mes · '+c.Grua_anual+'/año</small>';
+}
+
+const FILAS_CUADRO = [
+  {l:'Reposición a Nuevo (Unidad)',        has:c=>['SI','NO'].includes(String(c.repo_nvo).toUpperCase()),                get:c=>boolTxt(c.repo_nvo)},
+  {l:'Reposición a Nuevo (Ruedas)',        has:c=>['SI','NO'].includes(String(c.repo_rueda).toUpperCase()),             get:c=>boolTxt(c.repo_rueda)},
+  {l:'Rotura Cristales Laterales',         has:c=>c.Crista_late_Suma===-1||c.Crista_late_Suma>0,                       get:c=>montoEv(c.Crista_late_Suma, c.Crista_late_Eventos)},
+  {l:'Rotura Cerraduras (robo/intento)',   has:c=>c.Cerraduras_Suma===-1||c.Cerraduras_Suma>0,                         get:c=>montoEv(c.Cerraduras_Suma, c.Cerraduras_eventos)},
+  {l:'Daños por Granizo',                  has:c=>c.Granizo_Suma===-1||c.Granizo_Suma>0,                               get:c=>montoEv(c.Granizo_Suma, c.Granizo_Eventos)},
+  {l:'Parabrisas / Lunetas',               has:c=>c.Parabrisas_Suma===-1||c.Parabrisas_Suma>0,                         get:c=>montoEv(c.Parabrisas_Suma, c.Parabrisas_Eventos)},
+  {l:'Gastos de Gestoría (RPNA)',          has:c=>c.Gestoria_Suma>0,                                                   get:c=>montoEv(c.Gestoria_Suma)},
+  {l:'Accidentes Personales (x persona)',  has:c=>c.AP_Suma>0,                                                         get:c=> c.AP_Suma>0 ? '<span class="val">'+pesos(c.AP_Suma)+'</span>'+(c.AP_Suma_max?'<br><small>máx '+pesos(c.AP_Suma_max)+'</small>':'') : '<span class="no">—</span>'},
+  {l:'Daño Parcial x Robo Total',          has:c=>c.Daño_parcial_x_Robo>0,                                             get:c=>montoEv(c.Daño_parcial_x_Robo)},
+  {l:'Sin Franq. fija si daño supera',     has:c=>c.NO_Franquicia>0,                                                   get:c=> c.NO_Franquicia>0 ? '<span class="val">'+pesos(c.NO_Franquicia)+'</span>' : '<span class="no">—</span>'},
+  {l:'Grúa',                                has:()=>true,                                                               get:c=>gruaCuadroTxt(c)},
+  {l:'Antigüedad máxima',                  has:()=>true,                                                               get:c=>c.Max_Antig+' años'}
+];
+
+function franquiciaTxt(cobId){
+  if(cobId==='F') return '<span class="sl">SIN FRANQUICIA</span>';
+  const tramos = FRA.filter(f=>f.cob===cobId);
+  if(!tramos.length) return '<span class="no">—</span>';
+  const montos = tramos.map(t=>t.monto);
+  const min = Math.min(...montos), max = Math.max(...montos);
+  if(min===max) return '<span class="val">'+pesos(min)+'</span><br><small>fija</small>';
+  return '<span class="val">'+pesos(min)+' – '+pesos(max)+'</span><br><small>según suma asegurada</small>';
+}
+
+const GRUPOS_CUADRO = [
+  {nombre:'TODO RIESGO · SIN FRANQUICIA', cls:'cat-tra', grupos:['F'], franquicia:true, colapsado:true},
+  {nombre:'TODO RIESGO · CON FRANQUICIA', cls:'cat-tra', grupos:['P','O','M','D','J','J1','J2','J3'], franquicia:true},
+  {nombre:'TERCEROS COMPLETO', cls:'cat-c', grupos:['C2','C','C1']},
+  {nombre:'SOLO TOTALES', cls:'cat-b', grupos:['B2','B','B1']},
+  {nombre:'BÁSICA', cls:'cat-a', grupos:['A1','A']}
+];
+
+function renderCuadro(){
+  let h='';
+  for(const grupo of GRUPOS_CUADRO){
+    const cobs = grupo.grupos.map(g=>DATA.find(d=>d.GrupoCob===g)).filter(Boolean);
+    if(!cobs.length) continue;
+    const filas = FILAS_CUADRO.filter(fila=>cobs.some(c=>fila.has(c)));
+    h+='<details class="grupo-cuadro"'+(grupo.colapsado?'':' open')+'><summary class="cat-header '+grupo.cls+'">'+grupo.nombre+'</summary>';
+    h+='<div class="tabla-wrap"><table class="cuadro"><thead><tr><th class="ben-col">Beneficio</th>';
+    for(const c of cobs) h+='<th class="'+grupo.cls+'">'+c.GrupoCob+'</th>';
+    h+='</tr></thead><tbody>';
+    if(grupo.franquicia){
+      h+='<tr class="fila-franquicia"><td class="ben-col">Franquicia <small>(no es beneficio adicional)</small></td>';
+      for(const c of cobs) h+='<td>'+franquiciaTxt(c.GrupoCob)+'</td>';
+      h+='</tr>';
     }
-
-    function copiarWhatsApp(planId, franquicia) {
-        const anio = document.getElementById('txtAnio').value;
-        const sumaRaw = document.getElementById('txtSuma').value.replace(/\./g, "");
-        const suma = parseInt(sumaRaw) || 0;
-        const antig = anioHoy - anio;
-        const c = coberturas.find(x => x.id === planId);
-        const montos = tablaMontos[guiaActual];
-        const montoGrua = limitesGrua[planId] || "Cons.";
-        
-        let msg = `*Cotización Cooperación Seguros*\n`;
-        msg += `🚗 Unidad: ${anio} (${antig} años)\n`;
-        if (suma > 0) msg += `💰 Suma: $${suma.toLocaleString('es-AR')}\n`;
-        msg += `📋 Plan: *${c.nom}*\n`;
-        if (franquicia) msg += `🔴 *Franquicia: ${franquicia}*\n`;
-        msg += `--------------------------\n`;
-        if (c.beneficios.length > 0) {
-            c.beneficios.forEach(b => {
-                let valor = b.sl ? "S/Límite" : "$" + montos[b.nombre.toLowerCase()];
-                msg += `✅ ${b.nombre}: ${valor}\n`;
-            });
-        }
-        msg += `🚚 Grúa: $${montoGrua}\n`;
-        msg += `--------------------------\n`;
-        msg += `_Sujeto a pautas de suscripción._`;
-
-        navigator.clipboard.writeText(msg).then(() => {
-            alert("¡Copiado para WhatsApp!");
-        });
+    for(const fila of filas){
+      h+='<tr><td class="ben-col">'+fila.l+'</td>';
+      for(const c of cobs) h+='<td>'+fila.get(c)+'</td>';
+      h+='</tr>';
     }
-
-    function procesar() {
-        const anio = document.getElementById('txtAnio').value;
-        const sumaRaw = document.getElementById('txtSuma').value.replace(/\./g, "");
-        const suma = parseInt(sumaRaw) || 0;
-        const antig = anioHoy - anio;
-        const grid = document.getElementById('gridResultados');
-        const montos = tablaMontos[guiaActual];
-
-        grid.innerHTML = "";
-
-        const categorias = ["TODO RIESGO", "TERCEROS COMPLETO", "SOLO TOTALES", "BÁSICA"];
-        
-        categorias.forEach(cat => {
-            const cobsCat = coberturas.filter(c => c.cat === cat && antig <= c.max);
-            
-            if (cobsCat.length > 0) {
-                let catClass = "";
-                if (cat === "TODO RIESGO") catClass = "cat-tra";
-                else if (cat === "TERCEROS COMPLETO") catClass = "cat-c";
-                else if (cat === "SOLO TOTALES") catClass = "cat-b";
-                else if (cat === "BÁSICA") catClass = "cat-a";
-
-                grid.innerHTML += `<div class="cat-header ${catClass}">${cat}</div>`;
-                
-                cobsCat.forEach(c => {
-                    let fraInfo = "";
-                    let fraLabel = "";
-
-                    if (c.reqFra) {
-                        const fraObj = AUTFRA.find(f => f.id === c.id && suma >= f.desde && suma <= f.hasta);
-                        if (fraObj) {
-                            fraLabel = "$" + fraObj.monto.toLocaleString('es-AR');
-                            fraInfo = `<div class="franquicia-box">Franquicia: ${fraLabel}</div>`;
-                        } else {
-                            fraInfo = `<div class="franquicia-box" style="background:#fff7ed; color:#9a3412; border-color:#fdba74;">Ingresar suma para ver franquicia</div>`;
-                        }
-                    }
-
-                    let itemsHtml = "";
-                    if (c.beneficios.length > 0) {
-                        itemsHtml = c.beneficios.map(b => {
-                            let valor = b.sl ? `<span class="sl">S/LÍMITE</span>` : `<span class="val">$${montos[b.nombre.toLowerCase()]}</span>`;
-                            return `<li class="item-row"><span>✅ ${b.nombre}</span> <span class="evento-text">${b.evento}</span> ${valor}</li>`;
-                        }).join("");
-                    }
-
-                    let displayName = c.nom.split(' ').filter(word => word !== c.id).join(' ');
-                    let montoGrua = limitesGrua[c.id] || "Cons.";
-
-                    grid.innerHTML += `
-                        <div class="card ${c.id === 'D' || c.id === 'C2' || c.id === 'P' ? 'premium' : ''} ${c.id === 'P' || c.id === 'M' || c.id === 'D' ? 'tr' : ''}">
-                            <div class="card-header">
-                                <div class="header-left">
-                                    <span class="id-badge">${c.id}</span>
-                                    <span class="plan-name">${displayName}</span>
-                                </div>
-                                <span class="max-year">Antig. Máx: ${c.max} años</span>
-                            </div>
-                            
-                            ${fraInfo}
-
-                            <div class="base-tags">${c.base.map(b => `<span class="tag-cob">${b}</span>`).join('')}</div>
-
-                            <ul class="item-list">${itemsHtml}</ul>
-                            
-                            <div class="footer-row">
-                                <div class="grua-tag"><span>🚚 Grúa</span> <span>$${montoGrua}</span></div>
-                                <button class="btn-ws" onclick="copiarWhatsApp('${c.id}', '${fraLabel}')" title="Copiar para WhatsApp">📲</button>
-                            </div>
-                            
-                            <div class="nota-box">
-                                <b>INFO:</b> ${c.nota}
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-        });
-    }
-    procesar();
+    h+='</tbody></table></div></details>';
+  }
+  h+='<div class="sub" style="margin-top:10px;">Cuadro de referencia completo (todas las coberturas AUTOS, Guía 60) — no filtra por año ni suma asegurada. Las filas de franquicia muestran el rango entre tramos; el monto exacto depende de la suma asegurada del auto.</div>';
+  document.getElementById('cuadro').innerHTML=h;
+}
 </script>
 </body>
 </html>
