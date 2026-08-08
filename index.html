@@ -11,11 +11,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);margin:0;p
 h1{font-size:1.1rem;color:var(--primary);text-align:center;margin:4px 0 2px;}
 .sub{text-align:center;font-size:.72rem;color:#94a3b8;margin-bottom:12px;}
 .top-panel{background:#f8f9fa;padding:15px;border-radius:15px;margin-bottom:15px;border:1px solid #edf2f7;max-width:600px;margin-left:auto;margin-right:auto;}
-.search-box{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.search-box{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end;}
 .input-group{display:flex;flex-direction:column;gap:4px;}
 .input-group label{font-size:.7rem;font-weight:bold;color:#64748b;text-transform:uppercase;}
 input{padding:12px;border:1px solid #e2e8f0;border-radius:10px;font-size:1rem;text-align:center;outline:none;}
 input:focus{border-color:var(--secondary);}
+.antig-box{padding:12px 14px;border-radius:10px;background:var(--primary);color:#fff;font-size:1.1rem;font-weight:900;text-align:center;white-space:nowrap;}
 .grid-view{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:12px;}
 .card{border:2px solid #f0f4f8;border-radius:16px;padding:12px;background:#fff;position:relative;}
 .card.premium{border-color:var(--success);}
@@ -67,6 +68,8 @@ table.cuadro th.cat-a{background:#eaeded;color:#1c2833;}
 table.cuadro tr.fila-franquicia td{background:#fff3f3;}
 table.cuadro tr.fila-franquicia td.ben-col{background:#fff3f3;color:#dc2626;}
 table.cuadro tr.fila-franquicia small{color:#c0392b;}
+table.cuadro tr.fila-resumen td{background:#ebf2f7;color:var(--primary);font-size:.68rem;font-weight:bold;white-space:normal;line-height:1.4;}
+table.cuadro tr.fila-resumen td.ben-col{background:#ebf2f7;color:var(--primary);}
 table.cuadro tbody tr:nth-child(even):not(.fila-franquicia) td{background:#e8ecef;}
 table.cuadro tbody tr:nth-child(even):not(.fila-franquicia) td.ben-col{background:#dde3e8;}
 details.grupo-cuadro{margin-bottom:2px;}
@@ -84,11 +87,12 @@ details.grupo-cuadro:not([open]) summary.cat-header::after{content:'▸';}
 <div class="view-toggle"><button class="btn-toggle" id="btnToggle" onclick="toggleVista()">📊 Ver Cuadro Comparativo</button></div>
 <div id="topPanel" class="top-panel">
 <div class="search-box">
-<div class="input-group"><label>Año Modelo</label><input type="number" id="txtAnio" value="2018" oninput="procesar()"></div>
-<div class="input-group"><label>Suma Asegurada ($)</label><input type="text" id="txtSuma" placeholder="Ej: 25.000.000" oninput="fmtMoneda(this);procesar()"></div>
+<div class="input-group"><label>Año Modelo</label><input type="number" id="txtAnio" value="2018" oninput="actualizarTodo()"></div>
+<div class="input-group"><label>Antigüedad</label><div class="antig-box" id="antigBox">-</div></div>
+<div class="input-group"><label>Suma Asegurada ($)</label><input type="text" id="txtSuma" placeholder="Ej: 25.000.000" oninput="fmtMoneda(this);actualizarTodo()"></div>
 </div>
 </div>
-<div id="grid" class="grid-view"></div>
+<div id="grid"></div>
 <div id="cuadro" style="display:none"></div>
 </div>
 <script>
@@ -97,7 +101,8 @@ const FRA  = [{"cob":"D","desde":0,"hasta":9999999999,"monto":450000},{"cob":"J"
 const ANIO_HOY = 2026;
 
 const CATS = [
-  {nombre:'TODO RIESGO', cls:'cat-tra', grupos:['F','P','O','M','D','J','J1','J2','J3']},
+  {nombre:'TODO RIESGO · SIN FRANQUICIA', cls:'cat-tra', grupos:['F'], colapsado:true},
+  {nombre:'TODO RIESGO · CON FRANQUICIA', cls:'cat-tra', grupos:['P','O','M','D','J','J1','J2','J3']},
   {nombre:'TERCEROS COMPLETO', cls:'cat-c', grupos:['C2','C','C1']},
   {nombre:'SOLO TOTALES', cls:'cat-b', grupos:['B2','B','B1']},
   {nombre:'BÁSICA', cls:'cat-a', grupos:['A1','A']}
@@ -184,19 +189,20 @@ function procesar(){
   const anio=parseInt(document.getElementById('txtAnio').value)||ANIO_HOY;
   const suma=parseInt(document.getElementById('txtSuma').value.replace(/\./g,''))||0;
   const antig=ANIO_HOY-anio;
+  document.getElementById('antigBox').textContent = antig+' '+(antig===1?'año':'años');
   const soloA = suma<=0; // sin suma asegurada solo se cotiza la RC básica (A)
   const grid=document.getElementById('grid');
-  grid.innerHTML='';
   window.__rows=[]; let idx=0;
+  let h='';
 
-  if(soloA) grid.innerHTML='<div class="aviso-suma">Ingresá la <b>suma asegurada</b> para cotizar las demás coberturas. Sin suma solo se ofrece la <b>RC Básica (A)</b>.</div>';
+  if(soloA) h+='<div class="aviso-suma">Ingresá la <b>suma asegurada</b> para cotizar las demás coberturas. Sin suma solo se ofrece la <b>RC Básica (A)</b>.</div>';
 
   for(const cat of CATS){
     const cobs = cat.grupos
       .map(g=>DATA.find(d=>d.GrupoCob===g))
       .filter(c=>c && antig<=c.Max_Antig && (!soloA || c.GrupoCob==='A'));
     if(!cobs.length) continue;
-    grid.innerHTML+='<div class="cat-header '+cat.cls+'">'+cat.nombre+'</div>';
+    h+='<details class="grupo-cuadro"'+(cat.colapsado?'':' open')+'><summary class="cat-header '+cat.cls+'">'+cat.nombre+'</summary><div class="grid-view">';
     for(const c of cobs){
       let fraTxt='', fraBox='';
       if(GRUPOS_CON_FCIA.includes(c.GrupoCob)){
@@ -216,7 +222,7 @@ function procesar(){
       const tr=GRUPOS_CON_FCIA.includes(c.GrupoCob)?'tr':'';
       c.__msg=msgWhatsApp(c,antig,suma,fraTxt);
       window.__rows[idx]=c;
-      grid.innerHTML+=
+      h+=
         '<div class="card '+premium+' '+tr+'">'+
           '<div class="card-header">'+
             '<div class="header-left"><span class="id-badge">'+c.GrupoCob+'</span><span class="plan-name">'+c.NomFantasia+'</span></div>'+
@@ -232,18 +238,23 @@ function procesar(){
         '</div>';
       idx++;
     }
+    h+='</div></details>';
   }
-  if(!grid.innerHTML) grid.innerHTML='<div class="sub">No hay coberturas disponibles para esa antigüedad.</div>';
+  grid.innerHTML = h || '<div class="sub">No hay coberturas disponibles para esa antigüedad.</div>';
 }
 procesar();
 
 let vistaActual='tarjetas';
 function toggleVista(){
   vistaActual = vistaActual==='tarjetas' ? 'cuadro' : 'tarjetas';
-  document.getElementById('topPanel').style.display = vistaActual==='tarjetas' ? '' : 'none';
   document.getElementById('grid').style.display = vistaActual==='tarjetas' ? '' : 'none';
   document.getElementById('cuadro').style.display = vistaActual==='cuadro' ? '' : 'none';
   document.getElementById('btnToggle').textContent = vistaActual==='tarjetas' ? '📊 Ver Cuadro Comparativo' : '🎴 Ver Tarjetas';
+  if(vistaActual==='cuadro') renderCuadro();
+}
+
+function actualizarTodo(){
+  procesar();
   if(vistaActual==='cuadro') renderCuadro();
 }
 
@@ -298,15 +309,20 @@ const GRUPOS_CUADRO = [
 ];
 
 function renderCuadro(){
+  const anio=parseInt(document.getElementById('txtAnio').value)||ANIO_HOY;
+  const antig=ANIO_HOY-anio;
   let h='';
   for(const grupo of GRUPOS_CUADRO){
-    const cobs = grupo.grupos.map(g=>DATA.find(d=>d.GrupoCob===g)).filter(Boolean);
+    const cobs = grupo.grupos.map(g=>DATA.find(d=>d.GrupoCob===g)).filter(c=>c && antig<=c.Max_Antig);
     if(!cobs.length) continue;
     const filas = FILAS_CUADRO.filter(fila=>cobs.some(c=>fila.has(c)));
     h+='<details class="grupo-cuadro"'+(grupo.colapsado?'':' open')+'><summary class="cat-header '+grupo.cls+'">'+grupo.nombre+'</summary>';
     h+='<div class="tabla-wrap"><table class="cuadro"><thead><tr><th class="ben-col">Beneficio</th>';
     for(const c of cobs) h+='<th class="'+grupo.cls+'">'+c.GrupoCob+'</th>';
     h+='</tr></thead><tbody>';
+    h+='<tr class="fila-resumen"><td class="ben-col">Cobertura</td>';
+    for(const c of cobs) h+='<td>'+String(c['Resumen Cobertura']).split(',').map(t=>t.trim()).join('<br>')+'</td>';
+    h+='</tr>';
     if(grupo.franquicia){
       h+='<tr class="fila-franquicia"><td class="ben-col">Franquicia <small>(no es beneficio adicional)</small></td>';
       for(const c of cobs) h+='<td>'+franquiciaTxt(c.GrupoCob)+'</td>';
@@ -319,7 +335,7 @@ function renderCuadro(){
     }
     h+='</tbody></table></div></details>';
   }
-  h+='<div class="sub" style="margin-top:10px;">Cuadro de referencia completo (todas las coberturas AUTOS, Guía 60) — no filtra por año ni suma asegurada. Las filas de franquicia muestran el rango entre tramos; el monto exacto depende de la suma asegurada del auto.</div>';
+  h+='<div class="sub" style="margin-top:10px;">Cuadro filtrado por antigüedad según el Año Modelo ingresado arriba (columnas sin cobertura para esa antigüedad no se muestran). Las filas de franquicia muestran el rango entre tramos; el monto exacto depende de la suma asegurada del auto.</div>';
   document.getElementById('cuadro').innerHTML=h;
 }
 </script>
