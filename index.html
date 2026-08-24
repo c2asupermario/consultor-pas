@@ -36,6 +36,7 @@ input:focus,select:focus{border-color:var(--secondary);}
 .inc{color:var(--success);font-weight:bold;margin-left:8px;}
 .sin-ben{font-size:.8rem;color:#94a3b8;font-style:italic;padding:6px 0;}
 .aviso-suma{grid-column:1/-1;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;padding:12px 16px;border-radius:12px;font-size:.85rem;text-align:center;margin-bottom:8px;}
+.aviso-cc{grid-column:1/-1;background:#ecfdf5;border:2px solid #27ae60;color:#065f2c;padding:12px 16px;border-radius:12px;font-size:.85rem;text-align:center;margin-bottom:8px;font-weight:600;}
 .franquicia-box{background:#fff3f3;border:1px solid #fecaca;color:#dc2626;padding:8px;border-radius:10px;margin-bottom:10px;font-weight:bold;font-size:.9rem;text-align:center;}
 .franquicia-box.sinf{background:#ecfdf5;border-color:#a7f3d0;color:#047857;}
 .franquicia-box.pend{background:#fff7ed;border-color:#fdba74;color:#9a3412;}
@@ -229,6 +230,7 @@ function procesar(){
   let h='';
 
   if(soloA) h+='<div class="aviso-suma">Ingresá la <b>suma asegurada</b> para cotizar las demás coberturas. Sin suma solo se ofrece la <b>RC Básica (A)</b>.</div>';
+  if(!esAutos) h+='<div class="aviso-cc">⚠️ Válido para motocicletas de uso particular con cilindrada <b>igual o mayor a 250 cc</b>. No aplica a motos de menor cilindrada.</div>';
 
   for(const cat of CATS){
     const cobs = cat.grupos
@@ -361,6 +363,7 @@ function renderCuadro(){
   const datosTipo = DATA.filter(d=>d.TIPO===tipoActual);
   const GRUPOS_CUADRO = GRUPOS_CUADRO_POR_TIPO[tipoActual];
   let h='';
+  if(tipoActual==='MOTOS') h+='<div class="aviso-cc">⚠️ Válido para motocicletas de uso particular con cilindrada <b>igual o mayor a 250 cc</b>. No aplica a motos de menor cilindrada.</div>';
   for(const grupo of GRUPOS_CUADRO){
     const cobs = grupo.grupos.map(g=>datosTipo.find(d=>d.GrupoCob===g)).filter(c=>c && antig<=c.Max_Antig);
     if(!cobs.length) continue;
