@@ -80,6 +80,18 @@ details.grupo-cuadro:first-of-type summary.cat-header{margin-top:0;}
 details.grupo-cuadro summary.cat-header::-webkit-details-marker{display:none;}
 details.grupo-cuadro summary.cat-header::after{content:'▾';font-size:1rem;margin-left:8px;}
 details.grupo-cuadro:not([open]) summary.cat-header::after{content:'▸';}
+.filtro-filas{background:#f8f9fa;border:1px solid #edf2f7;border-radius:14px;padding:10px 12px;margin-bottom:14px;}
+.filtro-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.filtro-header b{font-size:.82rem;color:var(--primary);}
+.btn-mini{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:.75rem;font-weight:bold;cursor:pointer;}
+.btn-mini:hover{background:#154360;}
+.filtro-chips{display:flex;flex-wrap:wrap;gap:6px 14px;}
+.chip-check{display:flex;align-items:center;gap:5px;font-size:.78rem;color:#333;cursor:pointer;white-space:nowrap;}
+.chip-check input{cursor:pointer;margin:0;}
+table.cuadro th .th-check{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-size:.8rem;}
+table.cuadro th .th-check input{cursor:pointer;margin:0;width:14px;height:14px;}
+.card-check{display:flex;align-items:center;cursor:pointer;}
+.card-check input{cursor:pointer;margin:0;width:17px;height:17px;}
 </style>
 </head>
 <body>
@@ -144,6 +156,16 @@ const GRUPOS_CON_FCIA_POR_TIPO = {
   MOTOS: []
 };
 let tipoActual = 'AUTOS';
+let columnasOcultas = new Set();
+
+function toggleColumnaCuadro(key){
+  if(columnasOcultas.has(key)) columnasOcultas.delete(key); else columnasOcultas.add(key);
+  actualizarTodo();
+}
+function marcarTodoCuadro(){
+  columnasOcultas.clear();
+  actualizarTodo();
+}
 
 function cambiarTipo(){
   tipoActual = document.getElementById('selTipo').value;
@@ -231,11 +253,12 @@ function procesar(){
 
   if(soloA) h+='<div class="aviso-suma">Ingresá la <b>suma asegurada</b> para cotizar las demás coberturas. Sin suma solo se ofrece la <b>RC Básica (A)</b>.</div>';
   if(!esAutos) h+='<div class="aviso-cc">⚠️ Válido para motocicletas de uso particular con cilindrada <b>igual o mayor a 250 cc</b>. No aplica a motos de menor cilindrada.</div>';
+  h+='<div class="filtro-filas"><div class="filtro-header"><b>Tildá cada cobertura para incluirla/excluirla de la cotización</b><button class="btn-mini" onclick="marcarTodoCuadro()">✔️ Marcar todo</button></div></div>';
 
   for(const cat of CATS){
     const cobs = cat.grupos
       .map(g=>datosTipo.find(d=>d.GrupoCob===g))
-      .filter(c=>c && antig<=c.Max_Antig && (!soloA || c.GrupoCob==='A'));
+      .filter(c=>c && antig<=c.Max_Antig && (!soloA || c.GrupoCob==='A') && !columnasOcultas.has(c.GrupoCob));
     if(!cobs.length) continue;
     h+='<details class="grupo-cuadro"'+(cat.colapsado?'':' open')+'><summary class="cat-header '+cat.cls+'">'+cat.nombre+'</summary><div class="grid-view">';
     for(const c of cobs){
@@ -265,7 +288,7 @@ function procesar(){
       h+=
         '<div class="card '+premium+' '+tr+'">'+
           '<div class="card-header">'+
-            '<div class="header-left"><span class="id-badge">'+c.GrupoCob+'</span><span class="plan-name">'+c.NomFantasia+'</span></div>'+
+            '<div class="header-left"><label class="card-check"><input type="checkbox" checked onchange="toggleColumnaCuadro(\''+c.GrupoCob.replace(/'/g,"\\'")+'\')"></label><span class="id-badge">'+c.GrupoCob+'</span><span class="plan-name">'+c.NomFantasia+'</span></div>'+
             '<span class="max-year">Antig. Máx: '+c.Max_Antig+' años</span>'+
           '</div>'+
           fraBox+
@@ -364,13 +387,17 @@ function renderCuadro(){
   const GRUPOS_CUADRO = GRUPOS_CUADRO_POR_TIPO[tipoActual];
   let h='';
   if(tipoActual==='MOTOS') h+='<div class="aviso-cc">⚠️ Válido para motocicletas de uso particular con cilindrada <b>igual o mayor a 250 cc</b>. No aplica a motos de menor cilindrada.</div>';
+  h+='<div class="filtro-filas"><div class="filtro-header"><b>Tildá cada letra para incluirla/excluirla de la cotización</b><button class="btn-mini" onclick="marcarTodoCuadro()">✔️ Marcar todo</button></div></div>';
   for(const grupo of GRUPOS_CUADRO){
-    const cobs = grupo.grupos.map(g=>datosTipo.find(d=>d.GrupoCob===g)).filter(c=>c && antig<=c.Max_Antig);
+    const cobs = grupo.grupos.map(g=>datosTipo.find(d=>d.GrupoCob===g)).filter(c=>c && antig<=c.Max_Antig && !columnasOcultas.has(c.GrupoCob));
     if(!cobs.length) continue;
     const filas = FILAS_CUADRO.filter(fila=>cobs.some(c=>fila.has(c)));
     h+='<details class="grupo-cuadro"'+(grupo.colapsado?'':' open')+'><summary class="cat-header '+grupo.cls+'">'+grupo.nombre+'</summary>';
     h+='<div class="tabla-wrap"><table class="cuadro"><thead><tr><th class="ben-col">Beneficio</th>';
-    for(const c of cobs) h+='<th class="'+grupo.cls+'">'+c.GrupoCob+'</th>';
+    for(const c of cobs){
+      const key=c.GrupoCob.replace(/'/g,"\\'");
+      h+='<th class="'+grupo.cls+'"><label class="th-check"><input type="checkbox" checked onchange="toggleColumnaCuadro(\''+key+'\')">'+c.GrupoCob+'</label></th>';
+    }
     h+='</tr></thead><tbody>';
     h+='<tr class="fila-resumen"><td class="ben-col">Cobertura</td>';
     for(const c of cobs) h+='<td>'+String(c['Resumen Cobertura']).split(',').map(t=>t.trim()).join('<br>')+'</td>';
